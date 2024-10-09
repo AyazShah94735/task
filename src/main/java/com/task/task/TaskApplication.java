@@ -3,6 +3,11 @@ package com.task.task;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
 import static java.sql.DriverManager.println;
 
 
@@ -14,6 +19,7 @@ public class TaskApplication {
 
 		String input = "ayya";
 
+		// Check if the input is a palindrome
 		boolean isPalindrome = plandrom(input);
 		if (isPalindrome) {
 			System.out.println("The input is a palindrome.");
@@ -21,10 +27,15 @@ public class TaskApplication {
 			System.out.println("The input is not a palindrome.");
 		}
 
-		String result = removeDuplicate(input);
+		String input2 = "cbacdcbc";
+		String result = new TaskApplication().removeDuplicateLetters(input2);
 		System.out.println("After removing duplicates: " + result);
-	}
 
+
+		String substringInput = "pwwkew"; // Change this input as needed
+		int longestLength = lengthOfLongestSubstring(substringInput);
+		System.out.println("Length of the longest substring without repeating characters: " + longestLength);
+	}
 
 	public static boolean plandrom(String input) {
 		int i;
@@ -40,37 +51,65 @@ public class TaskApplication {
 		return true;
 	}
 
+	public String removeDuplicateLetters(String s) {
+		ArrayList<Integer> lastOccurrence = new ArrayList<>(26);
+		ArrayList<Boolean> inResult = new ArrayList<>(26);
+		List<Character> result = new LinkedList<>();
 
-	public static String removeDuplicate(String input) {
-		StringBuilder unDLetter = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			if(i!=0 && !unDLetter.contains(input.charAt(i))){
-				unDLetter.append(input.charAt(1));
-			}
+
+		for (int i = 0; i < 26; i++) {
+			lastOccurrence.add(-1);
+			inResult.add(false);
 		}
-		return unDLetter.toString();
+
+		for (int i = 0; i < s.length(); i++) {
+			lastOccurrence.set(s.charAt(i) - 'a', i);
+		}
+
+		for (int i = 0; i < s.length(); i++) {
+			char currentChar = s.charAt(i);
+
+
+			if (inResult.get(currentChar - 'a')) continue;
+
+
+			while (!result.isEmpty() && result.get(result.size() - 1) > currentChar &&
+					lastOccurrence.get(result.get(result.size() - 1) - 'a') > i) {
+				inResult.set(result.remove(result.size() - 1) - 'a', false);
+			}
+
+
+			result.add(currentChar);
+			inResult.set(currentChar - 'a', true);
+		}
+
+
+		StringBuilder stringBuilder = new StringBuilder();
+		for (char ch : result) {
+			stringBuilder.append(ch);
+		}
+
+		return stringBuilder.toString();
 	}
 
+	public static int lengthOfLongestSubstring(String s) {
+		int maxLength = 0;
+		int n = s.length();
 
-	public static void longestSubstring(String input) {
-		StringBuilder unDLetter = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			if(i!=0 && !unDLetter.contains(input.charAt(i))){
-				unDLetter.append(input.charAt(1));
+		for (int start = 0; start < n; start++) {
+			HashSet<Character> charSet = new HashSet<>();
+			for (int end = start; end < n; end++) {
+				char currentChar = s.charAt(end);
+
+				if (charSet.contains(currentChar)) {
+					break;
+				}
+
+				charSet.add(currentChar);
+				maxLength = Math.max(maxLength, end - start + 1);
 			}
 		}
-	}
 
-
-	public static String subSubstring(String input) {
-		StringBuilder longestSubString = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			if(i!=0 && !longestSubString.contains(input[i])){ {
-				return longestSubString.toString();
-			} else {
-				longestSubString.append(input[i]);
-			}
-		}
-		return longestSubString.toString();
+		return maxLength; // Return the maximum length found
 	}
 }
