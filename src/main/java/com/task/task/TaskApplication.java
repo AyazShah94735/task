@@ -51,7 +51,7 @@ public class TaskApplication {
 		return unDLetter.toString();
 	}
 
-
+// why this one used
 	public static void longestSubstring(String input) {
 		StringBuilder unDLetter = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
